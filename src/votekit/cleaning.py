@@ -42,7 +42,6 @@ def _clean(
     Returns:
         PreferenceProfile: a cleaned preference profile
     """
-
     # apply cleaning function to clean all ballots
     if clean_ballot_func is not None:
         cleaned = map(clean_ballot_func, pp.ballots)
@@ -173,3 +172,27 @@ def remove_noncands(
     new_ballots = [merge_ballots(b) for b in grouped_ballots]
 
     return PreferenceProfile(ballots=new_ballots)
+
+
+def undervote_profile(pp: PreferenceProfile) -> PreferenceProfile:
+    """
+    takes a ballot and truncates its rankings in the case.
+    Args:
+        ballot (Ballot): a ballot with empty ranks in a particular ranking list
+
+    Returns:
+        Ballot: a ballot without emptinesss
+    """
+
+    def undervote(ballot: Ballot) -> Ballot:
+        rank_list = ballot.ranking
+        cleaned_rank_list = [rank for rank in rank_list if None not in rank]
+        return Ballot(
+            id=ballot.id,
+            ranking=cleaned_rank_list,
+            weight=Fraction(ballot.weight),
+            voters=ballot.voters,
+        )
+
+    pp_clean = _clean(pp=pp, clean_ballot_func=undervote)
+    return pp_clean
