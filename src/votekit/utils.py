@@ -1,9 +1,9 @@
 from collections import namedtuple
 from fractions import Fraction
-import numpy as np
-from typing import Union, Iterable, Optional, Any
 from itertools import permutations
 import math
+import numpy as np
+from typing import Union, Iterable, Optional, Any
 
 from .ballot import Ballot
 from .pref_profile import PreferenceProfile
@@ -403,3 +403,11 @@ def fix_ties(ballot: Ballot) -> list[Ballot]:
                 )
 
     return ballots
+
+
+def make_ballot(ranking, weight):
+    ballot_rank = []
+    for cand in ranking:
+        ballot_rank.append({cand})
+
+    return Ballot(ranking=ballot_rank, weight=Fraction(weight))
